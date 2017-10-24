@@ -7,3 +7,6 @@ tmp/
 *~.nib
 local.properties
 .settings/
+target/
+.classpath
+.settings/

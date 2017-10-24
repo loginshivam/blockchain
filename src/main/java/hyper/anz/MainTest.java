@@ -2,9 +2,7 @@ package hyper.anz;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
 
-import org.hyperledger.fabric.sdk.BlockEvent.TransactionEvent;
 import org.hyperledger.fabric.sdk.ChaincodeID;
 import org.hyperledger.fabric.sdk.Channel;
 import org.hyperledger.fabric.sdk.HFClient;
@@ -35,28 +33,29 @@ public class MainTest {
 		String newOwner = "2000";
 		System.out.println("New owner is '" + newOwner + "'\n");
 
-		queryFabcar(channel, "CAR1");
-		updateCarOwner(channel, "CAR1", newOwner, false);
+		queryFabcar(channel, "TRADE10");
+		//executeTrade(channel,new String[] {"TRADE10","BSTUSD","150","200","S"});
+		// updateCarOwner(channel, "CAR1", newOwner, false);
 
-		System.out.println("after request for transaction without commit");
-		queryFabcar(channel, "CAR1");
-		updateCarOwner(channel, "CAR1", newOwner, true);
+		// System.out.println("after request for transaction without commit");
+		// queryFabcar(channel, "CAR1");
+		// updateCarOwner(channel, "CAR1", newOwner, true);
 
-		System.out.println("after request for transaction WITH commit");
-		queryFabcar(channel, "CAR1");
+		// System.out.println("after request for transaction WITH commit");
+		// queryFabcar(channel, "CAR1");
 
-		System.out.println("Sleeping 5s");
-		Thread.sleep(5000); // 5secs
-		queryFabcar(channel, "CAR1");
-		System.out.println("all done");
+		// System.out.println("Sleeping 5s");
+		// Thread.sleep(5000); // 5secs
+		// queryFabcar(channel, "CAR1");
+		// System.out.println("all done");
 
 	}
 
 	private static void queryFabcar(Channel channel, String key) throws Exception {
 		QueryByChaincodeRequest req = client.newQueryProposalRequest();
-		ChaincodeID cid = ChaincodeID.newBuilder().setName("fabcar").build();
+		ChaincodeID cid = ChaincodeID.newBuilder().setName("anzfx").build();
 		req.setChaincodeID(cid);
-		req.setFcn("queryCar");
+		req.setFcn("getTrade");
 		req.setArgs(new String[] { key });
 		System.out.println("Querying for " + key);
 		Collection<ProposalResponse> resps = channel.queryByChaincode(req);
@@ -67,28 +66,43 @@ public class MainTest {
 
 	}
 
-	private static void updateCarOwner(Channel channel, String key, String newOwner, Boolean doCommit)
-			throws Exception {
+	private static void executeTrade(Channel channel, String[] key) throws Exception {
 		TransactionProposalRequest req = client.newTransactionProposalRequest();
-		ChaincodeID cid = ChaincodeID.newBuilder().setName("fabcar").build();
+		ChaincodeID cid = ChaincodeID.newBuilder().setName("anzfx").build();
 		req.setChaincodeID(cid);
-		req.setFcn("changeCarOwner");
-		req.setArgs(new String[] { key });
-		System.out.println("Executing for " + key);
+		req.setFcn("executeTrade");
+		req.setArgs(key);
 		Collection<ProposalResponse> resps = channel.sendTransactionProposal(req);
-	    Iterator<ProposalResponse> it = resps.iterator();
-	    while(it.hasNext()) {
-	    	System.out.println("-------------------");
-	    	System.out.println("-------------------");
-	    	System.out.println(it.next().isVerified());
-	    	System.out.println("-------------------");
-	    	System.out.println("-------------------");
-	    }
-		if (doCommit) {
-			// channel.sendTransaction(resps);
-			CompletableFuture<TransactionEvent> event = channel.sendTransaction(resps);
-			//System.out.println(event.isCompletedExceptionally());
+		Iterator<ProposalResponse> p = resps.iterator();
+		while(p.hasNext()) {
+			System.out.println(p.next().getStatus());
 		}
+		channel.sendTransaction(resps);
+
 	}
+
+//	private static void updateCarOwner(Channel channel, String key, String newOwner, Boolean doCommit)
+//			throws Exception {
+//		TransactionProposalRequest req = client.newTransactionProposalRequest();
+//		ChaincodeID cid = ChaincodeID.newBuilder().setName("fabcar").build();
+//		req.setChaincodeID(cid);
+//		req.setFcn("changeCarOwner");
+//		req.setArgs(new String[] { key });
+//		System.out.println("Executing for " + key);
+//		Collection<ProposalResponse> resps = channel.sendTransactionProposal(req);
+//		Iterator<ProposalResponse> it = resps.iterator();
+//		while (it.hasNext()) {
+//			System.out.println("-------------------");
+//			System.out.println("-------------------");
+//			System.out.println(it.next().isVerified());
+//			System.out.println("-------------------");
+//			System.out.println("-------------------");
+//		}
+//		if (doCommit) {
+//			// channel.sendTransaction(resps);
+//			CompletableFuture<TransactionEvent> event = channel.sendTransaction(resps);
+//			// System.out.println(event.isCompletedExceptionally());
+//		}
+//	}
 
 }

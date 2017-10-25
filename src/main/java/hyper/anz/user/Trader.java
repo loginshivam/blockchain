@@ -1,4 +1,4 @@
-package hyper.anz;
+package hyper.anz.user;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -20,12 +20,12 @@ import javax.xml.bind.DatatypeConverter;
 import org.hyperledger.fabric.sdk.Enrollment;
 import org.hyperledger.fabric.sdk.User;
 
-public class SampleUser implements User {
+public class Trader implements User {
 
 	private final String certFolder;
     private final String userName;
 
-    public SampleUser(String certFolder, String userName) {
+    public Trader(String certFolder, String userName) {
         this.certFolder = certFolder;
         this.userName = userName;
     }

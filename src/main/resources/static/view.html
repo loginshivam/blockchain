@@ -1,0 +1,66 @@
+
+
+<div class="col-md-8 wrapper">
+	<nav class="navbar">
+		<div class="container-fluid">
+			<ul class="nav navbar-nav">
+				<li><img src="/images/ANZ.png"
+					class="img-rounded  img-responsive" alt="Loading..."
+					style="width: 40%"></li>
+
+
+			</ul>
+		</div>
+	</nav>
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<kbd>Search Transaction </kbd>
+			<span class="pull-right"> <a href="#!/create"><kbd>New Transaction</kbd></a> <a href="#!/viewAll"><kbd>View
+						All Transaction</kbd></a></span>
+		</div>
+		<form ng-submit="submit()">
+			<div class="form-group">
+				<label for="tradeId" class="col-sm-2 text-success">Trade Id:</label>
+				<div class="col-sm-4">
+					<input type="tradeId" class="form-control" id="tradeId"
+						ng-model="tradeId">
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-default">Submit</button>
+		</form>
+		<br>
+	</div>
+	<span ng-if="show">
+		<div class="panel panel-info">
+			<div class="panel-heading">Trade Detail By Id</div>
+			<table class="table table-bordered">
+				<thead class="text-primary">
+					<tr>
+						<th>Transaction Id</th>
+						<th>Currency Pair</th>
+						<th>Price</th>
+						<th>Amount</th>
+						<th>Buy/Sell</th>
+						<th>Counter Party</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>{{ trade.id }}</td>
+						<td>{{ trade.sym }}</td>
+						<td>{{ trade.price }}</td>
+						<td>{{ trade.size }}</td>
+						<td>{{ trade.side }}</td>
+						<td>{{ trade.party }}</td>
+					</tr>
+				</tbody>
+
+			</table>
+
+		</div>
+
+	</span>
+
+</div>
+

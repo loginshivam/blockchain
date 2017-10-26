@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>ANZ FX BlockChain</title>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/angular.min.js"></script>
+<script src="/js/angular-route.js"></script>
+<script src="/js/jquery.min.js"></script>
+<style>
+.container1 {
+	background-image: url("/images/build.jpg");
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	overflow: hidden;
+	height: 100%;
+	font-family: "Courier New"
+}
+
+.wrapper {
+	top: 0px;
+	right: 190px;
+	position: absolute;
+}
+
+.wrapper1 {
+	top: 100px;
+	right: 190px;
+	position: absolute;
+}
+
+.wrapper2 {
+	top: 0px;
+	right: 300px;
+	position: absolute;
+}
+
+.thumbnail {
+	position: relative;
+}
+
+.caption {
+	position: absolute;
+	top: 45%;
+	left: 0;
+	width: 100%;
+}
+</style>
+</head>
+
+<body ng-app="trade" class="container1">
+
+
+	<div ng-view></div>
+
+	<script>
+		var app = angular.module("trade", [ "ngRoute" ]);
+		app.config(function($routeProvider) {
+			$routeProvider.when("/", {
+				templateUrl : "welcome.html",
+				controller : "welcomeController"
+			}).when("/view", {
+				templateUrl : "view.html",
+				controller : "viewController"
+			}).when("/test", {
+				templateUrl : "test.html",
+
+			}).when("/viewAll", {
+				templateUrl : "viewAll.html",
+				controller : "viewAllController"
+			}).when("/create", {
+				templateUrl : "create.html",
+				controller : "createController"
+			});
+		});
+		app.controller("welcomeController", function($scope, $timeout,
+				$location) {
+			$scope.display = true;
+			$timeout(function() {
+				$scope.display = false;
+				$location.path("/viewAll");
+			}, 5000);
+		});
+
+		app.controller("viewAllController", function($scope, $http) {
+			$scope.myvalue1 = "1";
+			console.log("here");
+			$http.get("/allTrades/").then(function(response) {
+				$scope.trades = response.data;
+				console.log(response.data);
+			});
+		});
+
+		app.controller("viewController", function($scope, $http) {
+			$scope.myvalue1 = "1";
+			$scope.show = false;
+			$scope.submit = function() {
+				$scope.show = false;
+				if ($scope.tradeId) {
+					$http.get("/getTrade/" + $scope.tradeId).then(
+							function(response) {
+								$scope.trade = response.data;
+								$scope.trade.id = $scope.tradeId;
+								$scope.show = true;
+							});
+				}
+
+			};
+
+		});
+
+		app.controller("createController", function($scope, $http) {
+			$scope.myvalue2 = "2";
+			$scope.mess = false;
+			$scope.submit = function() {
+				$http.get(
+						"/createTrade/" + $scope.sym + "/" + $scope.price + "/"
+								+ $scope.size + "/" + $scope.side + "/"
+								+ $scope.party).then(function(response) {
+					$scope.tradeId = response.data;
+					$scope.mess = true;
+					console.log(response.data);
+					$scope.price = "";
+					$scope.sym = "";
+					$scope.side = "";
+					$scope.size = "";
+					$scope.party = "";
+				});
+
+			};
+
+		});
+	</script>
+</html>

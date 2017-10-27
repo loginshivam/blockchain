@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hyperledger.fabric.sdk.ChaincodeID;
+import org.hyperledger.fabric.sdk.ChaincodeResponse.Status;
 import org.hyperledger.fabric.sdk.ProposalResponse;
 import org.hyperledger.fabric.sdk.QueryByChaincodeRequest;
 import org.hyperledger.fabric.sdk.TransactionProposalRequest;
@@ -36,7 +37,7 @@ public class ANZFX {
 		ArrayList<String> array = new ArrayList<String>();
 		req.setChaincodeID(cid);
 		req.setFcn("allTrades");
-		req.setArgs(new String[] { "T1000" ,"T2000" });
+		req.setArgs(new String[] { "T0", "T50" });
 		Collection<ProposalResponse> resps = cacheVO.getChannel().queryByChaincode(req);
 		System.out.println(resps.size());
 		for (ProposalResponse resp : resps) {
@@ -47,7 +48,7 @@ public class ANZFX {
 		return array.get(0);
 	}
 
-	public void executeTrade(ClientCacheVO cacheVO, String[] key) throws Exception {
+	public boolean executeTrade(ClientCacheVO cacheVO, String[] key) throws Exception {
 		TransactionProposalRequest req = cacheVO.getClient().newTransactionProposalRequest();
 		ChaincodeID cid = ChaincodeID.newBuilder().setName("anzfx").build();
 		req.setChaincodeID(cid);
@@ -55,11 +56,18 @@ public class ANZFX {
 		req.setArgs(key);
 		Collection<ProposalResponse> resps = cacheVO.getChannel().sendTransactionProposal(req);
 		Iterator<ProposalResponse> p = resps.iterator();
+		ArrayList<String> list = new ArrayList<String>();
 		while (p.hasNext()) {
-			System.out.println(p.next().getStatus());
+			String s = p.next().getStatus().toString();
+			list.add(s);
 		}
+		String statusString = list.get(0);
+		System.out.println(statusString);
 		cacheVO.getChannel().sendTransaction(resps);
-
+		boolean status = false;
+		if ("SUCCESS".equalsIgnoreCase(statusString))
+			status = true;
+		return status;
 	}
 
 }

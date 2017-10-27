@@ -46,7 +46,6 @@ public class TradeControler {
 		try {
 			ClientCacheVO cacheVO = ClientCache.getClientCache();
 			ANZFX anzfx = new ANZFX();
-			System.out.println("helllo World");
 			System.out.println(tradeId);
 			try {
 				output = anzfx.getTrade(cacheVO, tradeId);
@@ -66,25 +65,31 @@ public class TradeControler {
 
 	@RequestMapping(value = "/createTrade/{sym}/{price}/{size}/{side}/{party}", method = RequestMethod.GET)
 	public String createTrade(@PathVariable String sym, @PathVariable String price, @PathVariable String size,
-			@PathVariable String side,@PathVariable String party) {
-		int randomNum = ThreadLocalRandom.current().nextInt(1000, 2000 + 1);
+			@PathVariable String side, @PathVariable String party) {
+		int randomNum = ThreadLocalRandom.current().nextInt(10, 49 + 1);
+		boolean status = false;
 		try {
 			ClientCacheVO cacheVO = ClientCache.getClientCache();
 			ANZFX anzfx = new ANZFX();
 			try {
-				
-				anzfx.executeTrade(cacheVO, new String[] { "T" + randomNum, sym, price, size, side,party });
+				status = anzfx.executeTrade(cacheVO, new String[] { "T" + randomNum, sym, price, size, side, party });
+			} catch (RuntimeException e) {
+
 			} catch (Exception e) {
+
 				e.printStackTrace();
 			}
 		} catch (CryptoException e) {
+
 			e.printStackTrace();
 		} catch (InvalidArgumentException e) {
+
 			e.printStackTrace();
 		} catch (TransactionException e) {
+
 			e.printStackTrace();
 		}
-		return "{ \"tradeId\" : \""+randomNum+"\"}";
+		return "{ \"tradeId\" : \"" + randomNum + "\" , \"status\" : " + status + "}";
 
 	}
 
